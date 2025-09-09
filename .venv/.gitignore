@@ -1,9 +1,0 @@
-# Archivos de entorno virtual
-venv/
-*.env
-
-
-*.pyc
-__pycache__/
-
-client_secret_690728344662-77jiiifei174v9l5kfek3h75lkt9uknv.apps.googleusercontent.com

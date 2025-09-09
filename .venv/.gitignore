@@ -2,12 +2,8 @@
 venv/
 *.env
 
-# Archivos de configuración específicos (ejemplo)
-# client_secret_690728344662-77jijifei174v9l5kfek3h75lkt9uknv
 
-# Otros archivos que no quieres versionar
 *.pyc
 __pycache__/
 
-# Agrega aquí el nombre completo de tu archivo JSON
-client_secret_690728344662-77jijifei174v9l5kfek3h75lkt9uknv
+client_secret_690728344662-77jiiifei174v9l5kfek3h75lkt9uknv.apps.googleusercontent.com

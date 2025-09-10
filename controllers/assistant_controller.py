@@ -2,11 +2,11 @@ import datetime
 import webbrowser
 import wikipedia
 import pywhatkit
-import pyjokes
-import yfinance as yf
 
 from core.speech.speechToText import listen
 from core.speech.textToSpeech import speak
+from services.calendar_service import GoogleCalendarManager
+from core.utils.parse_natural_time import parse_natural_datetime
 
 
 def greet_user():
@@ -40,17 +40,39 @@ def tell_time():
 
 
 def start_assistant():
+
     """Bucle principal del asistente."""
     greet_user()
+    calendar = GoogleCalendarManager()
 
     while True:
         command = listen().lower()
         print(f"Comando recibido: {command}")
 
-        if "abrir youtube" in command:
-            speak("Estoy abriendo YouTube")
-            webbrowser.open("https://www.youtube.com")
+        if "agendar recordatorio" in command:
+            try:
+                speak("¿Cuál es el nombre del recordatorio?")
+                reminder_name = listen().lower()
 
+                speak("¿Para qué fecha y hora? Por ejemplo: hoy a las 3 de la tarde")
+                reminder_time_text = listen().lower()
+
+                start_time, end_time, timezone = parse_natural_datetime(reminder_time_text)
+
+                success = calendar.create_event(
+                    summary=reminder_name,
+                    start_time=start_time,
+                    end_time=end_time,
+                    timezone=timezone,
+                    attendees=None
+                )
+
+                if success == true:
+                    speak(f"Recordatorio '{reminder_name}' agendado exitosamente")
+                else:
+                    speak("No pude guardar el recordatorio. Intenta de nuevo")
+            except Exception as e:
+                speak(f"Error en el recordatorio: {e}")
         elif "abrir navegador" in command:
             speak("Estoy abriendo el navegador")
             webbrowser.open("https://www.google.com")
@@ -72,28 +94,6 @@ def start_assistant():
             topic = command.replace("busca en internet", "").strip()
             pywhatkit.search(topic)
             speak("Esto es lo que encontré en Internet")
-
-        elif "reproducir" in command:
-            song = command.replace("reproducir", "").strip()
-            pywhatkit.playonyt(song)
-            speak("Reproduciendo en YouTube")
-
-        elif "chiste" in command:
-            joke = pyjokes.get_joke("es")
-            speak(joke)
-
-        elif "precio de la acción" in command:
-            stock = command.split("de")[-1].strip().lower()
-            cartera = {
-                "apple": "AAPL", "amazon": "AMZN",
-                "google": "GOOGL", "tesla": "TSLA"
-            }
-            try:
-                ticker = yf.Ticker(cartera[stock])
-                price = ticker.info['regularMarketPrice']
-                speak(f"El precio de {stock} es {price} dólares.")
-            except Exception:
-                speak("Perdón, no pude encontrar esa acción.")
 
         elif "adiós" in command or "hasta luego" in command:
             speak("Nos vemos, que tengas un buen día.")

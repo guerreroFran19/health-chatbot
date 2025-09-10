@@ -3,7 +3,7 @@ import speech_recognition as sr
 def listen():
     r = sr.Recognizer()
     with sr.Microphone() as origen:
-        r.pause_threshold = 0.8
+        r.pause_threshold = 2
         print("Ya puedes hablar...")
         audio = r.listen(origen)
 

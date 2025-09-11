@@ -2,11 +2,11 @@ import datetime
 import webbrowser
 import wikipedia
 import pywhatkit
-import pyjokes
-import yfinance as yf
 
+from controllers.calendar_controller import delete_event, create_event, list_upcoming_events
 from core.speech.speechToText import listen
 from core.speech.textToSpeech import speak
+
 
 
 def greet_user():
@@ -40,6 +40,7 @@ def tell_time():
 
 
 def start_assistant():
+    print("Bienvenido al assistant")
     """Bucle principal del asistente."""
     greet_user()
 
@@ -47,9 +48,17 @@ def start_assistant():
         command = listen().lower()
         print(f"Comando recibido: {command}")
 
-        if "abrir youtube" in command:
-            speak("Estoy abriendo YouTube")
-            webbrowser.open("https://www.youtube.com")
+        if "agendar recordatorio" in command or "agendar turno" in command:
+            create_event()
+
+        elif "borrar recordatorio" in command or "eliminar recordatorio" in command:
+            speak("cual es el recordatorio a eliminar?")
+            event_name = listen().lower()
+            delete_event(event_name)
+
+        elif "listar recordatorios" in command or "mostrar recordatorios" in command:
+            speak("Buscando tus recordatorios...")
+            list_upcoming_events()
 
         elif "abrir navegador" in command:
             speak("Estoy abriendo el navegador")
@@ -72,28 +81,6 @@ def start_assistant():
             topic = command.replace("busca en internet", "").strip()
             pywhatkit.search(topic)
             speak("Esto es lo que encontré en Internet")
-
-        elif "reproducir" in command:
-            song = command.replace("reproducir", "").strip()
-            pywhatkit.playonyt(song)
-            speak("Reproduciendo en YouTube")
-
-        elif "chiste" in command:
-            joke = pyjokes.get_joke("es")
-            speak(joke)
-
-        elif "precio de la acción" in command:
-            stock = command.split("de")[-1].strip().lower()
-            cartera = {
-                "apple": "AAPL", "amazon": "AMZN",
-                "google": "GOOGL", "tesla": "TSLA"
-            }
-            try:
-                ticker = yf.Ticker(cartera[stock])
-                price = ticker.info['regularMarketPrice']
-                speak(f"El precio de {stock} es {price} dólares.")
-            except Exception:
-                speak("Perdón, no pude encontrar esa acción.")
 
         elif "adiós" in command or "hasta luego" in command:
             speak("Nos vemos, que tengas un buen día.")

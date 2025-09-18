@@ -6,11 +6,10 @@ import pywhatkit
 from controllers.calendar_controller import delete_event, create_event, list_upcoming_events
 from core.speech.speechToText import listen
 from core.speech.textToSpeech import speak
-
+from core.utils.search_incoming_event import search_incoming_event_inNext_3days
 
 
 def greet_user():
-    """Saludo inicial basado en la hora."""
     hora = datetime.datetime.now()
     if hora.hour < 6 or hora.hour > 20:
         momento = "Buenas noches"
@@ -23,7 +22,6 @@ def greet_user():
 
 
 def tell_day():
-    """Decir qué día es hoy."""
     dia = datetime.datetime.today().weekday()
     calendario = {
         0: "Lunes", 1: "Martes", 2: "Miércoles",
@@ -33,7 +31,6 @@ def tell_day():
 
 
 def tell_time():
-    """Decir la hora actual."""
     hora = datetime.datetime.now()
     hora_texto = f"Son las {hora.hour} horas con {hora.minute} minutos"
     speak(hora_texto)
@@ -43,7 +40,7 @@ def start_assistant():
     print("Bienvenido al assistant")
     """Bucle principal del asistente."""
     greet_user()
-
+    search_incoming_event_inNext_3days()
     while True:
         command = listen().lower()
         print(f"Comando recibido: {command}")

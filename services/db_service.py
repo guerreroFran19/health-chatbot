@@ -9,5 +9,4 @@ def get_connection():
         port="5432"
     )
     conn.set_client_encoding('UTF8')
-
-
+    return conn

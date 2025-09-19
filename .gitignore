@@ -9,6 +9,8 @@ config/
 .env
 .env.local
 .env.production
+__pycache__/
+.idea/
 
 # Directorios de virtual environment
 .venv/

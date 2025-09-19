@@ -4,3 +4,5 @@ pywhatkit
 yfinance
 pyjokes
 wikipedia
+fastapi
+uvicorn

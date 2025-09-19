@@ -12,20 +12,24 @@ SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 class GoogleCalendarManager:
     def __init__(self):
-        self.service = self._authenticate()  # 🔹 Autenticar siempre al crear instancia
+        # 🔹 Verificar si ya existe una instancia del servicio
+        if not hasattr(GoogleCalendarManager, "_shared_service"):
+            # Primera vez - autenticar
+            GoogleCalendarManager._shared_service = self._authenticate()
+
+        self.service = GoogleCalendarManager._shared_service
 
     def _authenticate(self):
-        """Autenticación fresca cada vez - SIN guardar token"""
+        """Autenticación una sola vez"""
         print("🔑 Solicitando autenticación...")
 
-        # 🔹 SIEMPRE iniciar flujo de autenticación nuevo
         flow = InstalledAppFlow.from_client_secrets_file(
             "client_secret_690728344662-77jiiifei174v9l5kfek3h75lkt9uknv.apps.googleusercontent.com.json",
             SCOPES
         )
 
         creds = flow.run_local_server(port=0)
-        print("✅ Autenticación exitosa")
+        print("✅ Autenticación exitosa (solo una vez)")
 
         return build('calendar', 'v3', credentials=creds)
 
@@ -41,6 +45,9 @@ class GoogleCalendarManager:
             singleEvents=True,
             orderBy='startTime'
         ).execute()
+
+
+
 
         events = event_result.get("items", [])
         if not events:

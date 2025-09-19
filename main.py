@@ -4,7 +4,7 @@ from services import user_service
 
 if __name__ == "__main__":
     # --- OPCIÓN 1: probar el asistente ---
-    # start_assistant()
+    start_assistant()
 
     # --- OPCIÓN 2: probar el controlador de usuarios ---
     result = user_controller.create_user_controller(

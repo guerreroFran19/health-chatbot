@@ -60,8 +60,12 @@ Sigue estos pasos para poner en marcha el asistente:
     Asegúrate de tener el archivo `requirements.txt` en la raíz del proyecto.
     ```bash
     pip install -r requirements.txt
+    
     ```
-
+    3.1 **Instalar las dependencias de la API google calendar:**
+    ```bash
+    pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib    
+    ```
 ---
 
 

@@ -6,14 +6,19 @@ CREATE TABLE users (
 );
 
 
-CREATE TABLE events (
+CREATE TABLE IF NOT EXISTS medications (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
-    type VARCHAR(20) CHECK (type IN ('appointment','medication')),
-    title VARCHAR(150) NOT NULL,
-    event_date TIMESTAMP NOT NULL,
-    details TEXT,
-    CONSTRAINT fk_event_user FOREIGN KEY (user_id)
+    name VARCHAR(100) NOT NULL,
+    dosage VARCHAR(50) NOT NULL,  -- Ej: "500mg", "1 tableta"
+    frequency_hours INT NOT NULL, -- Cada cuántas horas se toma
+    start_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    end_date TIMESTAMP,           -- Opcional: hasta cuándo tomarlo
+    instructions TEXT,
+    is_active BOOLEAN DEFAULT TRUE,
+
+    CONSTRAINT fk_medication_user FOREIGN KEY (user_id)
         REFERENCES users(id)
         ON DELETE CASCADE
 );
+

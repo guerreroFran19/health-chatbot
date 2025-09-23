@@ -68,9 +68,21 @@ Sigue estos pasos para poner en marcha el asistente:
     ```
 ---
 
-
-
+### Ejecución
+sigue estos pasos para inicar la app
+1. **Ejectura el archivo main.py**
+    ```bash
+      main.py
+    ```
+2. **Levanta la DB en un entorno virtual activado**
+    ```bash
+      docker-compose up -d
+    ```
 ---
+3. **Ejecutar este comando en un entorno virtual activado**
+    ```bash
+      uvicorn app:app --reload
+    ```
 
 ## 🏗️ Arquitectura por capas
 La arquitectura del proyecto está organizada en capas para mantener el código modular, mantenible y escalable.
@@ -93,3 +105,70 @@ project/
 │
 └── controllers/           # Orquesta el flujo principal del asistente.
     └── assistant_controller.py # Maneja la lógica de alto nivel, coordinando el uso de core y serv
+   ```
+## Endpoints 
+1. **Autenticación** 
+    ```bash
+   Loguearse 
+   POST /auth/login
+   
+   body requerido 
+   {
+      "email": "emailTest@email",
+      "password": "123456"
+    }
+   
+   ```
+   ```bash
+   Registrarse
+    POST /register
+   
+   body requerido 
+   {
+      "name":"test",
+      "email": "emailTest@email",
+      "password": "123456"
+    }
+   
+   ```
+2. **Medicamentos**
+    ```bash
+   crear medicamentos 
+   
+   POST /medications/
+   ```
+   ```bash
+   headers requeridos
+   
+   Authorization: Bearer tu_token_jwt_aqui
+    Content-Type: application/json
+   ```
+   ```bash
+   body requerido 
+   {
+      "name": "Paracetamol",
+      "dosage": "500mg",
+      "frequency_hours": 8,
+      "instructions": "Tomar después de comer"
+    }
+   
+   body opcional 
+   
+   {
+      "name": "Ibuprofeno",
+      "dosage": "400mg", 
+      "frequency_hours": 12,
+      "end_date": "2024-12-31T23:59:59",
+      "instructions": "Tomar con alimentos"
+    }
+   ```
+   ```bash
+   Listar medicamentos
+   GET /medications/
+   ```
+   ```bash
+   Headers requeridos:
+    Authorization: Bearer tu_token_jwt_aqui
+   ```
+
+   

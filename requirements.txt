@@ -6,3 +6,5 @@ pyjokes
 wikipedia
 fastapi
 uvicorn
+psycopg2
+bcrypt

@@ -1,4 +1,3 @@
-# controllers/user_controller.py
 from services import user_service
 
 def create_user_controller(name: str, email: str, password: str):

@@ -57,6 +57,9 @@ def start_assistant():
             speak("Buscando tus recordatorios...")
             list_upcoming_events()
 
+
+
+
         elif "abrir navegador" in command:
             speak("Estoy abriendo el navegador")
             webbrowser.open("https://www.google.com")

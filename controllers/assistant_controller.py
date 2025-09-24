@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import webbrowser
 import wikipedia
 import pywhatkit
@@ -7,13 +7,12 @@ from controllers.calendar_controller import delete_event, create_event, list_upc
 from core.speech.speechToText import listen
 from core.speech.textToSpeech import speak
 from core.utils.search_incoming_event import search_incoming_event_inNext_3days
-
-# Importa el controlador de medicamentos
 from .bot_medication_controller import list_medications, delete_medication_by_name_bot, create_medication_bot
 
 
+
 def greet_user():
-    hora = datetime.datetime.now()
+    hora = datetime.now()
     if hora.hour < 6 or hora.hour > 20:
         momento = "Buenas noches"
     elif 6 <= hora.hour < 13:
@@ -23,21 +22,18 @@ def greet_user():
 
     speak(f"{momento}, ¿en qué te puedo ayudar?")
 
-
 def tell_day():
-    dia = datetime.datetime.today().weekday()
+    dia = datetime.today().weekday()
     calendario = {
         0: "Lunes", 1: "Martes", 2: "Miércoles",
         3: "Jueves", 4: "Viernes", 5: "Sábado", 6: "Domingo"
     }
     speak(f"Hoy es {calendario[dia]}")
 
-
 def tell_time():
-    hora = datetime.datetime.now()
+    hora = datetime.now()
     hora_texto = f"Son las {hora.hour} horas con {hora.minute} minutos"
     speak(hora_texto)
-
 
 def start_assistant():
     print("Bienvenido al assistant")
@@ -93,18 +89,28 @@ def start_assistant():
         elif "busca en wikipedia" in command:
             topic = command.replace("busca en wikipedia", "").strip()
             wikipedia.set_lang("es")
-            result = wikipedia.summary(topic, sentences=1)
-            speak("Esto es lo que encontré en Wikipedia")
-            speak(result)
+            try:
+                result = wikipedia.summary(topic, sentences=1)
+                speak("Esto es lo que encontré en Wikipedia")
+                speak(result)
+            except:
+                speak("No encontré información sobre ese tema en Wikipedia.")
 
         elif "busca en internet" in command:
             topic = command.replace("busca en internet", "").strip()
             pywhatkit.search(topic)
             speak("Esto es lo que encontré en Internet")
 
-        elif "adiós" in command or "hasta luego" in command:
-            speak("Nos vemos, que tengas un buen día.")
-            break
+        # 🔹 Función: farmacias cercanas
+        elif "farmacias cerca" in command:
+            from services.pharmacy_service import find_nearby_pharmacies
+            results = find_nearby_pharmacies()
+            if isinstance(results, list):
+                speak(f"Encontré {len(results)} farmacias cerca de tu ubicación:")
+                for i, pharmacy in enumerate(results, 1):
+                    speak(f"Farmacia {i}: {pharmacy}")
+            else:
+                speak(results)
 
         else:
             speak("No entendí bien, ¿podrías repetirlo?")

@@ -7,7 +7,11 @@
       <excludeFolder url="file://$MODULE_DIR$/.venv/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
+<<<<<<< HEAD
     <orderEntry type="jdk" jdkName="Python 3.13 (health-chatbot)" jdkType="Python SDK" />
+=======
+    <orderEntry type="jdk" jdkName="Python 3.13 (health-chatbot-1)" jdkType="Python SDK" />
+>>>>>>> f4555e559aa6af637347e6354fcbf7df4c0ac295
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

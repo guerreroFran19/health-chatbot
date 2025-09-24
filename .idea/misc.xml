@@ -3,5 +3,9 @@
   <component name="Black">
     <option name="sdkName" value="Python 3.13 (health-chatbot)" />
   </component>
+<<<<<<< HEAD
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.13 (health-chatbot)" project-jdk-type="Python SDK" />
+=======
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.13 (health-chatbot-1)" project-jdk-type="Python SDK" />
+>>>>>>> f4555e559aa6af637347e6354fcbf7df4c0ac295
 </project>

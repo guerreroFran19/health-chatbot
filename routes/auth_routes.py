@@ -1,35 +1,15 @@
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
-from controllers.auth_controller import AuthController
+from fastapi import APIRouter
+from controllers.auth_controller import login_controller, register_controller
 
-# Crear router
-router = APIRouter(prefix="/auth", tags=["Authentication"])
-
-
-class UserLogin(BaseModel):
-    email: str
-    password: str
-
+router = APIRouter()
 
 @router.post("/login")
-def login(user: UserLogin):
-    try:
-        print(f"[DEBUG] Login attempt for: {user.email}")
+def login(credentials: dict):
+    return login_controller(credentials)
 
-        result = AuthController.login_user(user.email, user.password)
-
-        if result["status"] == "error":
-            raise HTTPException(status_code=401, detail=result["message"])
-
-        return result
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        print(f"[ERROR] Login error: {e}")
-        raise HTTPException(status_code=500, detail="Error interno del servidor")
-
-
+@router.post("/register")
+def register(user_data: dict):
+    return register_controller(user_data)
 @router.post("/logout")
 def logout():
-    return {"status": "success", "message": "Logout exitoso"}
+    return logout()

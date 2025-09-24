@@ -1,49 +1,31 @@
-# routes/medication_routes.py
-from fastapi import APIRouter, HTTPException, Depends
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends
 from middleware.auth_middleware import get_current_user
+from controllers.medication_controller import (
+    create_medication_controller,
+    get_medications_controller,
+    get_medication_controller,
+    update_medication_controller,
+    delete_medication_controller
+)
 
-router = APIRouter(prefix="/medications", tags=["Medications"])
+router = APIRouter()
 
+@router.post("")
+def create_medication(medication_data: dict, current_user: dict = Depends(get_current_user)):
+    return create_medication_controller(medication_data, current_user)
 
-class MedicationCreate(BaseModel):
-    name: str
-    dosage: str
-    frequency_hours: int
-    instructions: str = ""
+@router.get("")
+def get_medications(current_user: dict = Depends(get_current_user)):
+    return get_medications_controller(current_user)
 
+@router.get("/{medication_id}")
+def get_medication(medication_id: int, current_user: dict = Depends(get_current_user)):
+    return get_medication_controller(medication_id, current_user)
 
-@router.post("/", response_model=dict)
-async def create_medication(
-        medication: MedicationCreate,
-        current_user: dict = Depends(get_current_user)  # ✅ JWT required
-):
-    """Crear medicamento para el usuario autenticado"""
-    try:
-        from services.medication_service import add_medication
+@router.put("/{medication_id}")
+def update_medication(medication_id: int, medication_data: dict, current_user: dict = Depends(get_current_user)):
+    return update_medication_controller(medication_id, medication_data, current_user)
 
-        new_med = add_medication(current_user["user_id"], medication.dict())
-        return {
-            "status": "success",
-            "medication": new_med,
-            "message": "Medicamento agregado correctamente"
-        }
-    except ValueError as ve:
-        raise HTTPException(status_code=400, detail=str(ve))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="Error interno del servidor")
-
-
-@router.get("/", response_model=dict)
-async def list_medications(current_user: dict = Depends(get_current_user)):
-    """Obtener medicamentos del usuario autenticado"""
-    try:
-        from services.medication_service import get_medications
-
-        medications = get_medications(current_user["user_id"])
-        return {
-            "status": "success",
-            "medications": medications
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="Error interno del servidor")
+@router.delete("/{medication_id}")
+def delete_medication(medication_id: int, current_user: dict = Depends(get_current_user)):
+    return delete_medication_controller(medication_id, current_user)

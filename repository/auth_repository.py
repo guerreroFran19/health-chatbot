@@ -42,7 +42,40 @@ def create_user(name: str, email: str, password: str):
             conn.close()
         except:
             pass
+def get_user_by_id(user_id: int):
+    query = "SELECT id, name, email, password FROM users WHERE id = %s;"
+    try:
+        conn = get_connection()
+        if conn is None:
+            raise Exception("No hay conexión a la base de datos")
 
+        cur = conn.cursor()
+        cur.execute(query, (user_id,))
+        user = cur.fetchone()
+
+        if user:
+            user_dict = {
+                "id": user[0],
+                "name": user[1],
+                "email": user[2],
+                "password": user[3]
+            }
+            return user_dict
+        else:
+            return None
+
+    except Exception as ex:
+        print("❌ Error en get_user_by_id:", repr(ex))
+        raise
+    finally:
+        try:
+            cur.close()
+        except:
+            pass
+        try:
+            conn.close()
+        except:
+            pass
 
 def get_user_by_email(email: str):
     query = "SELECT id, name, email, password FROM users WHERE email = %s;"

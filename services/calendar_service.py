@@ -29,7 +29,7 @@ class GoogleCalendarManager:
         )
 
         creds = flow.run_local_server(port=0)
-        print("✅ Autenticación exitosa (solo una vez)")
+        print("✅ Autenticación exitosa ")
 
         return build('calendar', 'v3', credentials=creds)
 

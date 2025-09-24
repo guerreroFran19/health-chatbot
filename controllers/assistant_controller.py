@@ -8,6 +8,9 @@ from core.speech.speechToText import listen
 from core.speech.textToSpeech import speak
 from core.utils.search_incoming_event import search_incoming_event_inNext_3days
 
+# Importa el controlador de medicamentos
+from .bot_medication_controller import list_medications, delete_medication_by_name_bot, create_medication_bot
+
 
 def greet_user():
     hora = datetime.datetime.now()
@@ -41,6 +44,7 @@ def start_assistant():
     """Bucle principal del asistente."""
     greet_user()
     search_incoming_event_inNext_3days()
+
     while True:
         command = listen().lower()
         print(f"Comando recibido: {command}")
@@ -49,7 +53,7 @@ def start_assistant():
             create_event()
 
         elif "borrar recordatorio" in command or "eliminar recordatorio" in command:
-            speak("cual es el recordatorio a eliminar?")
+            speak("¿Cuál es el recordatorio a eliminar?")
             event_name = listen().lower()
             delete_event(event_name)
 
@@ -57,8 +61,24 @@ def start_assistant():
             speak("Buscando tus recordatorios...")
             list_upcoming_events()
 
+        elif "agregar medicamento" in command:
+            create_medication_bot()
 
+        elif "listar medicamentos" in command or "mostrar medicamentos" in command or "qué medicamentos tengo" in command:
+            speak("Buscando tus medicamentos...")
+            medication_info = list_medications()
+            speak(medication_info)
 
+        elif "próxima toma" in command or "cuándo tomo mi medicina" in command:
+            speak("Consultando tus próximas tomas...")
+            medication_info = list_medications()
+            speak(medication_info)
+
+        elif "eliminar medicamento" in command or "borrar medicamento" in command:
+            speak("Dime el nombre del medicamento a borrar...")
+            meddication_name = listen().lower()
+            delete_result = delete_medication_by_name_bot(meddication_name)
+            speak(delete_result)
 
         elif "abrir navegador" in command:
             speak("Estoy abriendo el navegador")

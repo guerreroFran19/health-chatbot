@@ -1,45 +1,40 @@
-# controllers/auth_controller.py
-from repository import user_repository
-from config.jwt_config import create_access_token, verify_password
-from datetime import timedelta
+import os
 
-class AuthController:
-    @staticmethod
-    def login_user(email: str, password: str):
-        try:
-            if not email or not password:
-                return {"status": "error", "message": "Email y contraseña requeridos"}
+from repository.sessions_repository import deactivate_session
+from services.auth_service import login_user, register_user
+from fastapi import HTTPException, Request
 
-            # 1. Buscar usuario
-            user = user_repository.get_user_by_email(email)
-            if not user:
-                return {"status": "error", "message": "Usuario no encontrado"}
+def login_controller(credentials: dict):
+    try:
+        result = login_user(
+            email=credentials.get('email'),
+            password=credentials.get('password')
+        )
+        return {"message": "Login exitoso", "data": result}
+    except ValueError as e:
+        raise HTTPException(status_code=401, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error interno del servidor")
 
-            # 2. Verificar contraseña con passlib (compatible con bcrypt)
-            if not verify_password(password, user['password']):
-                return {"status": "error", "message": "Contraseña incorrecta"}
+def register_controller(user_data: dict):
+    try:
+        result = register_user(
+            name=user_data.get('name'),
+            email=user_data.get('email'),
+            password=user_data.get('password')
+        )
+        return {"message": "Usuario registrado exitosamente", "user": result}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error interno del servidor")
 
-            # 3. Crear token JWT
-            access_token = create_access_token(
-                data={"sub": user['email'], "user_id": user['id']},
-                expires_delta=timedelta(minutes=30)
-            )
 
-            # 4. Preparar respuesta
-            user_data = {
-                'id': user['id'],
-                'name': user['name'],
-                'email': user['email'],
-                'has_google_calendar': user.get('google_calendar_enabled', False)
-            }
+def logout(request: Request):
+    token = request.headers.get("Authorization")
+    if not token or not token.startswith("Bearer "):
+        return {"detail": "Token requerido"}
 
-            return {
-                "status": "success",
-                "message": "Login exitoso",
-                "user": user_data,
-                "access_token": access_token,
-                "token_type": "bearer"
-            }
-
-        except Exception as e:
-            return {"status": "error", "message": f"Error en el login: {str(e)}"}
+    token = token.split(" ")[1]
+    deactivate_session(token)
+    return {"detail": "Sesión cerrada exitosamente"}
